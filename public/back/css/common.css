@@ -30,6 +30,10 @@ a:active {
     margin-top: 20px;
 }
 
+.red {
+    color: #a94442;
+}
+
 .lt_aside {
     position: fixed;
     left: 0;
@@ -38,6 +42,11 @@ a:active {
     height: 100%;
     background-color: #222D32;
     z-index: 999;
+    transition: left 1s;
+}
+
+.lt_aside.hidemenu {
+    left: -180px;
 }
 
 .lt_aside .brand {
@@ -106,6 +115,11 @@ a:active {
     background-color: pink;
     padding-left: 180px;
     padding-top: 50px;
+    transition: padding-left 1s;
+}
+
+.lt_main.hidemenu {
+    padding-left: 0px;
 }
 
 .lt_topbar {
@@ -116,6 +130,11 @@ a:active {
     height: 50px;
     background-color: #3c8dbc;
     padding-left: 180px;
+    transition: padding-left 1s;
+}
+
+.lt_topbar.hidemenu {
+    padding-left: 0px;
 }
 
 .lt_topbar .icon_left,

@@ -24,6 +24,9 @@ $(function () {
                         min: 2,
                         max: 6,
                         message: "用户名长度必须是2-6位"
+                    },
+                    callback: {
+                        message: "用户名不存在"
                     }
                 }
             },
@@ -38,6 +41,10 @@ $(function () {
                         min: 6,
                         max: 12,
                         message: "密码长度必须是6-12位"
+                    },
+                    callback: {
+                        message: '密码错误',
+
                     }
                 }
             }
@@ -47,25 +54,25 @@ $(function () {
     /*
       注册表单校验成功事件
     */
-   $("#form").on('success.form.bv', function (e) {
-       // 阻止默认的表单提交
-    e.preventDefault();
+    $("#form").on('success.form.bv', function (e) {
+        // 阻止默认的表单提交
+        e.preventDefault();
         // 通过ajax提交
         $.ajax({
             type: "post",
             url: "/employee/employeeLogin",
             data: $('#form').serialize(),
             dataType: "json",
-            success: function(info) {
+            success: function (info) {
                 console.log(info);
                 if (info.success) {
                     location.href = "index.html";
                 }
                 if (info.error === 1000) {
-                    alert(info.message);
+                    $('#form').data("bootstrapValidator").updateStatus("username", "INVALID", "callback");
                 }
                 if (info.error === 1001) {
-                    alert(info.message);
+                    $('#form').data("bootstrapValidator").updateStatus("password", "INVALID", "callback");
                 }
             }
         })
@@ -74,7 +81,7 @@ $(function () {
     /*
      重置表单
      */
-    $('[type="reset"]').click(function(){
+    $('[type="reset"]').click(function () {
         $('#form').data("bootstrapValidator").resetForm();
     })
 })

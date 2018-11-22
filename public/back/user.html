@@ -92,7 +92,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary" id="logoutBtn">退出</button>
+                    <button type="button" class="btn btn-primary" id="submitBtn">确定</button>
                 </div>
             </div>
         </div>
@@ -105,7 +105,7 @@
             <td>{{ v.username }}</td>
             <td>{{ v.mobile }}</td>
             <td>{{ v.isDelete === 1 ? "正常" : "禁用"}}</td>
-            <td>
+            <td data-id = "{{ v.id }}">
                 {{ if v.isDelete === 1}}
                 <button class="btn btn-danger">禁用</button>
                 {{ else }}

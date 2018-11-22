@@ -2,6 +2,8 @@ $(function () {
 
     var currentPage = 1;
     var pageSize = 5;
+    var currentId;
+    var isDelete;
     render();
 
     function render() {
@@ -36,6 +38,31 @@ $(function () {
 
     $('tbody').on("click", ".btn", function () {
         $("#userModal").modal("show");
+
+        currentId = $(this).parent().data("id");
+
+        isDelete = $(this).hasClass("btn-danger") ? 0 : 1;
+    });
+
+
+    $('#submitBtn').click(function () {
+        $.ajax({
+            type: "post",
+            url: "/user/updateUser",
+            data: {
+                id: currentId,
+                isDelete: isDelete
+            },
+            dataType: "json",
+            success: function (info) {
+                console.log(info);
+                if (info.success) {
+                    $("#userModal").modal("hide");
+                    render();
+
+                }
+            }
+        })
     })
 
 })

@@ -60,7 +60,7 @@ $(function () {
         var id = $(this).data("id");
         $('[name="brandId"]').val(id);
 
-        $('#form').data("bootstrapValidator").updateStatus("brandId", "VALID");
+        $('#form').data("bootst    rapValidator").updateStatus("brandId", "VALID");
     });
 
     // 上传图片

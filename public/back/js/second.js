@@ -29,7 +29,7 @@ $(function () {
                 })
             }
         })
-    }
+    };
 
 
     $('#addBtn').click(function () {
@@ -49,13 +49,88 @@ $(function () {
                 $('.dropdown-menu').html(htmlStr);
             }
         })
-    })
+    });
 
 
     $('.dropdown-menu').on("click", "a", function () {
         var txt = $(this).text();
         $('#dropdownText').text(txt);
 
+        var id = $(this).data("id");
+        $('[name = "categoryId"]').val(id);
+        $('#form').data("bootstrapValidator").updateStatus("categoryId", "VALID");
+
+    });
+
+    $("#fileupload").fileupload({
+        dataType: "json",
+        //e：事件对象
+        //data：图片上传后的对象，通过data.result.picAddr可以获取上传后的图片地址
+        done: function (e, data) {
+            console.log(data);
+            var result = data.result;
+            var picUrl = result.picAddr;
+            $('#imgBox img').attr("src", picUrl);
+
+            $('[name="brandLogo"]').val(picUrl);
+
+            $('#form').data("bootstrapValidator").updateStatus("brandLogo", "VALID");
+        }
+    });
+
+    $('#form').bootstrapValidator({
+
+        excluded: [],
+        // 小图标
+        feedbackIcons: {
+            valid: 'glyphicon glyphicon-ok',
+            invalid: 'glyphicon glyphicon-remove',
+            validating: 'glyphicon glyphicon-refresh'
+        },
+
+        fields: {
+            categoryId: {
+                validators: {
+                    notEmpty: {
+                        message: "请选择一级分类"
+                    }
+                }
+            },
+            brandName: {
+                validators: {
+                    notEmpty: {
+                        message: "请输入二级分类"
+                    }
+                }
+            },
+            brandLogo: {
+                validators: {
+                    notEmpty: {
+                        message: "请选择图片"
+                    }
+                }
+            }
+        }
+
+    });
+
+    $("#form").on("success.form.bv",function( e ) {
+        e.preventDefault();
+
+        $.ajax({
+            type:"post",
+            url: "/category/addSecondCategory",
+            data:$('#form').serialize(),
+            dataType: "json",
+            success:function( info ){
+                console.log(info);
+
+                $('#addModal').modal("hide");
+                currentPage = 1;
+                render();
+                $('#form').data("bootstrapValidator").resetForm(true);
+            }
+        })
     })
 
 })

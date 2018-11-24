@@ -1,4 +1,5 @@
 $(function () {
+    var picArr = [];
     var currentPage = 1;
     var pageSize = 2;
 
@@ -60,19 +61,32 @@ $(function () {
         var id = $(this).data("id");
         $('[name="brandId"]').val(id);
 
-        $('#form').data("bootst    rapValidator").updateStatus("brandId", "VALID");
+        $('#form').data("bootstrapValidator").updateStatus("brandId", "VALID");
     });
 
     // 上传图片
-    // $('#fileupload').fileupload({
-    //     dataType: "json",
-    //     done:function(e, data){
-    //         console.log(data);
-    //         var result = data.result;
-    //         var picUrl = reault.picAddr;
+    $('#fileupload').fileupload({
+        dataType: "json",
+        done: function (e, data) {
+            var picObj = data.result;
 
-    //     }
-    // })
+            picArr.unshift(picObj);
+
+            var picUrl = picObj.picAddr;
+            $('#imgBox').prepend('<img src="' + picUrl + '" style="width:100px">');
+
+            if (picArr.length > 3) {
+                picArr.pop();
+                $('#imgBox img:last-of-type').remove();
+            }
+            console.log(picArr);
+
+            if (picArr.length === 3) {
+                $('#form').data("bootstrapValidator").updateStatus("picStatus", "VALID");
+            }
+
+        }
+    })
 
     // 表单验证
     $('#form').bootstrapValidator({
@@ -109,6 +123,10 @@ $(function () {
                 validators: {
                     notEmpty: {
                         message: "请输入商品库存"
+                    },
+                    regexp: {
+                        regexp: /^[1-9]\d*$/,
+                        message: '商品库存必须是非零开头的数字'
                     }
                 }
             },
@@ -116,6 +134,10 @@ $(function () {
                 validators: {
                     notEmpty: {
                         message: "请输入商品尺码"
+                    },
+                    regexp: {
+                        regexp: /^\d{2}-\d{2}$/,
+                        message: '必须是xx-xx的格式，xx是两位数字，列如：33-44'
                     }
                 }
             },
@@ -133,7 +155,7 @@ $(function () {
                     }
                 }
             },
-            picStarus: {
+            picStatus: {
                 validators: {
                     notEmpty: {
                         message: "请上传3张图片"
@@ -142,4 +164,37 @@ $(function () {
             }
         }
     });
+
+    // 注册表单校验
+    $('#form').on("success.form.bv", function (e) {
+        e.preventDefault();
+
+        var paramsStr = $('#form').serialize();
+
+        paramsStr += "&picName1=" + picArr[0].picName + "&picAdd1=" + picArr[0].picAddr;
+        paramsStr += "&picName2=" + picArr[1].picName + "&picAdd2=" + picArr[1].picAddr;
+        paramsStr += "&picName3=" + picArr[2].picName + "&picAdd3=" + picArr[2].picAddr;
+
+
+        $.ajax({
+            type: "post",
+            url: "/product/addProduct",
+            data: paramsStr,
+            dataType: "json",
+            success: function (info) {
+                console.log(info);
+                if (info.success) {
+                    $('#addModal').modal("hide");
+                    currentPage = 1;
+                    render();
+
+                    $('#form').data("bootstrapValidator").resetForm(true);
+                    $('#dropdaowText').text("请选择二级分类");
+                    $('#imgBox img').remove();
+                    picArr = [];
+
+                }
+            }
+        })
+    })
 })
